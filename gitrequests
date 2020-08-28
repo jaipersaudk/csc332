@@ -1,0 +1,7 @@
+git pull
+create file/folder
+git add file/folder
+git commit -m "Message"
+git push -u origin master
+sign in
+
