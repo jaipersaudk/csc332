@@ -1,7 +1,20 @@
+//pulling files
 git pull
+
+//pushing files
 create file/folder
 git add file/folder
 git commit -m "Message"
 git push -u origin master
 sign in
 
+//deleting files
+rm file
+rmdir folder
+git add .
+git commit -m "Message"
+git push -u origin master
+sign in
+
+//Bible
+https://i3wm.org/docs/refcard.html
