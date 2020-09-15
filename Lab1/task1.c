@@ -6,17 +6,18 @@ int main (int argc, char* argv[])
 {
 
 /* Part 0 */
-  char* filepath = argv[1];
+  char* filepath = argv[1]; //first parameter from cmd line
   int returnval;
 
   // Check file existence
+
   returnval = access (filepath, F_OK);
   if (returnval == 0)
     printf ("\n %s exists\n", filepath);
   else
   {
     if (errno == ENOENT)
-      printf ("%s does not exist\n", filepath)
+      printf ("%s does not exist\n", filepath);
     else if (errno == EACCES)
     {
       printf ("%s is not accessible\n", filepath);
@@ -25,5 +26,21 @@ int main (int argc, char* argv[])
   }
 
   //Check read access...
+
+  returnval = access (filepath, R_OK);
+  if (returnval == 0)
+    printf ("\n %s has read access\n", filepath);
+  else
+    printf ("%s does not have read access\n", filepath);
+
   //Check write access..
+
+  returnval = access(filepath, W_OK);
+  if (returnval == 0)
+    printf ("\n %s has write access\n", filepath);
+  else if (errno == EACCES)
+    printf ("\n %s does not have write access\n", filepath);
+  else if (errno == EROFS) //EROFS read-only file system
+    printf ("\n %s does not have write access (only read access)\n", filepath);
+  return 0;
 }
