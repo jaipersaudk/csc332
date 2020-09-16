@@ -7,47 +7,50 @@ int main (int argc, char* argv[])
 {
   int count = 0;
   char buffer[5];
-
-  char* filepath = "source.txt";
   int returnval;
 
-  // Check file existence
-
-  returnval = access (filepath, F_OK);
-  if (returnval == 0)
-    printf ("\n %s exists\n", filepath);
-  /* if doesnt return 0, then errno will have a value */
-  else
+  for (int i = 1; i <= 2; i++)
   {
-    if (errno == ENOENT)
-      printf ("%s does not exist\n", filepath);
-    else if (errno == EACCES)
+    char* filepath = argv[i];
+
+    // Check file existence
+
+    returnval = access (filepath, F_OK);
+    if (returnval == 0)
+      printf ("\n %s exists\n", filepath);
+    /* if doesnt return 0, then errno will have a value */
+    else
     {
-      printf ("%s is not accessible\n", filepath);
-      return 0;
+      if (errno == ENOENT)
+        printf ("\n %s does not exist\n", filepath);
+      else if (errno == EACCES)
+      {
+        printf ("%s is not accessible\n", filepath);
+        return 0;
+      }
     }
-  }
 
-  //Check read access...
+    //Check read access...
 
-  returnval = access (filepath, R_OK);
-  if (returnval == 0)
-    printf ("\n %s has read access\n", filepath);
-  else
-    printf ("%s does not have read access\n", filepath);
+    returnval = access (filepath, R_OK);
+    if (returnval == 0)
+      printf ("\n %s has read access\n", filepath);
+    else
+      printf ("\n %s does not have read access\n", filepath);
 
 
-  //Check write access..
+    //Check write access..
 
-  returnval = access(filepath, W_OK);
-  if (returnval == 0)
-    printf ("\n %s has write access\n", filepath);
-  else if (errno == EACCES)
-    printf ("\n %s does not have write access\n", filepath);
-  else if (errno == EROFS) //EROFS read-only file system
-  {
-    printf ("\n %s does not have write access (only read access)\n", filepath);
-  return 0;
+    returnval = access(filepath, W_OK);
+    if (returnval == 0)
+      printf ("\n %s has write access\n", filepath);
+    else if (errno == EACCES)
+      printf ("\n %s does not have write access\n", filepath);
+    else if (errno == EROFS) //EROFS read-only file system
+    {
+      printf ("\n %s does not have write access (only read access)\n", filepath);
+    return 0;
+    }
   }
 
   /*

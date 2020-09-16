@@ -67,12 +67,12 @@ int main (int argc, char* argv[])
       count = write (1,buffer,count);
     }
 
+    //close the file after reading and writing from it
+    close(fd);
+
   }
 
   printf("\n");
-
-  //close the file after reading and writing from it
-  close(fd);
 
   return 0;
 }
