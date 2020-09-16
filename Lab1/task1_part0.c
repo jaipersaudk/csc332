@@ -50,11 +50,13 @@ int main (int argc, char* argv[])
   }
 
   /* Create and open a new file destination.txt */
+  /* must use O_CREAT flag to create the new file --> must specify mode*/
 
-  int filename = open("destination.txt", O_WRONLY|O_RDONLY|O_CREAT, S_IRUSR|S_IRUSR|S_IXUSR);
-  //S_IRUSR|S_IRUSR|S_IXUSR) --> grants user read, write, and execute permissions
+  int fd = open("destination.txt", O_RDWR|O_CREAT, S_IRUSR|S_IWUSR|S_IXUSR);
+  //S_IRUSR|S_IWUSR|S_IXUSR) --> grants user read, write, and execute permissions
 
-  if (filename < 0)
-    printf ("\ndestination.txt already exists\n");
+  printf("fd = %d\n", fd); // to test value of fd
+  close(fd);
+
   return 0;
 }

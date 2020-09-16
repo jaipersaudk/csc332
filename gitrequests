@@ -8,6 +8,15 @@ git commit -m "Message"
 git push -u origin master
 sign in
 
+//pushing multiple files
+git add .
+git commit -m "Message"
+
+OR
+
+git commit -a -m "Message"
+
+
 //deleting files
 rm file
 rmdir folder
