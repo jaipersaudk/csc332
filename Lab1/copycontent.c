@@ -1,12 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h> //for EXIT_FAILURE
 #include <unistd.h>
 #include <errno.h>
 #include <fcntl.h> // for open system call
 
 int main (int argc, char* argv[])
 {
+  int buff_size = 5;
   int count = 0;
-  char buffer[5];
+  char buffer[buff_size];
   int returnval;
 
   for (int i = 1; i <= 2; i++)
@@ -53,32 +55,47 @@ int main (int argc, char* argv[])
     }
   }
 
-  /*
 
-  //displaying file contents
-  int fd = open(filepath, O_RDONLY); //open file in read-only
+  int source_fd = open(argv[1], O_RDONLY); //open source file
+  int dest_fd;
 
-  //display message based on value of fd
-  if (fd < 0)
-    perror("File Failed to Open\n");
-  else
+  //if error with opening source file, terminate program
+  if (source_fd < 0)
   {
-    printf ("File Opened Successfully\n");
-
-    //Read the file 5 bytes at a time into the buffer --> when count == 0, it reached the end of the file
-    while ((count = read(fd, buffer, 5)) != 0)
-    {
-      //write contents of file 5 bytes at a time from buffer --> fd == 1 for stdout
-      count = write (1,buffer,count);
-    }
-
+    perror ("\nSource File Failed to Open\n");
+    exit(EXIT_FAILURE);
   }
 
-  printf("\n");
+  //if source file is open, then open dest file
+  else
+  {
+    printf("\nSource File Opened Successfully\n");
+    dest_fd = open(argv[2], O_RDWR);
 
-  //close the file after reading and writing from it
-  close(fd);
-  */
+    //if error with opening dest file, terminate program
+    if (dest_fd < 0)
+    {
+      perror ("\nDestination File Failed to Open\n");
+      exit(EXIT_FAILURE);
+    }
+    else
+    {
+      printf("\nDestination File Opened Successfully\n");
+    }
+  }
+
+  //Read source file 5 bytes at a time into the buffer --> when count == 0, it reached the end of the file
+  while ( (count = read(source_fd, buffer, buff_size)) != 0 )
+  {
+    //write contents of source file 5 bytes at a time from buffer into the dest file
+    count = write (dest_fd, buffer, count);
+  }
+
+  // close source and dest file
+  close(source_fd);
+  close(dest_fd);
+
+  printf("\nCopy Successful\n");
 
   return 0;
 }
