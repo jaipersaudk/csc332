@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h> // for EXIT_FAILURE
 #include <errno.h>
 #include <fcntl.h> // for open system call
 
@@ -55,10 +56,13 @@ int main (int argc, char* argv[])
 
   //display message based on value of fd
   if (fd < 0)
-    perror("File Failed to Open\n");
+  {
+    perror("\n File Failed to Open\n"); //terminate program if file cannot open
+    exit(EXIT_FAILURE);
+  }
   else
   {
-    printf ("File Opened Successfully\n");
+    printf ("\nFile Opened Successfully\n");
 
     //Read the file 5 bytes at a time into the buffer --> when count == 0, it reached the end of the file
     while ((count = read(fd, buffer, 5)) != 0)
@@ -67,10 +71,10 @@ int main (int argc, char* argv[])
       count = write (1,buffer,count);
     }
 
-    //close the file after reading and writing from it
-    close(fd);
-
   }
+
+  //close the file after reading and writing from it
+  close(fd);
 
   printf("\n");
 

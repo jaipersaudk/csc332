@@ -50,13 +50,13 @@ int main (int argc, char* argv[])
   }
 
   /* Create and open a new file destination.txt */
-  /* must use O_CREAT flag to create the new file --> must specify mode*/
+  /* must use O_CREAT flag to create the new file --> must specify mode for user*/
 
   int fd = open("destination.txt", O_RDWR|O_CREAT, S_IRUSR|S_IWUSR|S_IXUSR);
   //S_IRUSR|S_IWUSR|S_IXUSR) --> grants user read, write, and execute permissions
 
   printf("fd = %d\n", fd); // to test value of fd
-  close(fd);
+  close(fd); //close destination file
 
   return 0;
 }

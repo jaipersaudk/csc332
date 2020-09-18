@@ -6,7 +6,7 @@
 
 int main (int argc, char* argv[])
 {
-  int buff_size = 78;
+  int buff_size = 78; //for reading source file 75 bytes at a time
   int count = 0;
   char buffer[buff_size];
   char buffer_abc[3] = {'A','B','C'};
@@ -88,7 +88,7 @@ int main (int argc, char* argv[])
   //Read source file 75 bytes at a time into the buffer --> when count == 0, it reached the end of the file
   while ( (count = read(source_fd, buffer, buff_size)) != 0 )
   {
-    //printf("\n Count_before = %d\n", count);
+
     //replace each '5' in the buffer with 'O'
     for (int i = 0; i<count; i++)
     {
@@ -97,11 +97,13 @@ int main (int argc, char* argv[])
     }
     //write contents of source file 75 bytes at a time from buffer into the dest file
     count = write (dest_fd, buffer, count);
-    //printf("\n Count_after = %d\n", count);
+
+    //only print ABC every 75 characters
     if (count == buff_size)
     {
         write(dest_fd, buffer_abc,3);
     }
+
   }
 
   // close source and dest file

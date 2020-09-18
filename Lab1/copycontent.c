@@ -11,6 +11,7 @@ int main (int argc, char* argv[])
   char buffer[buff_size];
   int returnval;
 
+  //checking file existence for the first two arguments from commandline
   for (int i = 1; i <= 2; i++)
   {
     char* filepath = argv[i];
