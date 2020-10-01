@@ -13,6 +13,7 @@ int main (int argc, char* argv[])
   int fr = 0;
 
   fq = fork(); // fork a child (call it Process Q) - 0 is returned to child, and PID is returned to parent
+
   if (fq == 0) //child (Q) executes this
   {
     a = a+b;
@@ -20,16 +21,19 @@ int main (int argc, char* argv[])
     printf("Process Q \n\tThe value of a: %d \n\tThe value of b: %d \n\tThe Process ID: %d\n", a,b,getpid());
 
     fr = fork(); // fork another child (call it Process R) - 0 is returned to child, and PID is returned to parent
+
     if (fr != 0) //parent (Q) executes this
     {
       b = b+20;
       printf("Process Q \n\tThe value of a: %d \n\tThe value of b: %d \n\tThe Process ID: %d\n", a,b,getpid());
     }
+
     else // child (R) executes this --> new child process(Process R)
     {
       a = (a*b)+30;
       printf("Process R \n\tThe value of a: %d \n\tThe value of b: %d \n\tThe Process ID: %d\n", a,b,getpid());
     }
+
   }
 
   else // parent (P) executes this
