@@ -1,0 +1,65 @@
+First Run of Program:
+Process P
+	The value of a: 10
+	The value of b: 30
+	The Process ID: 486
+Process Q
+	The value of a: 35
+	The value of b: 25
+	The Process ID: 487
+Process Q
+	The value of a: 35
+	The value of b: 45
+	The Process ID: 487
+Process R
+	The value of a: 905
+	The value of b: 25
+	The Process ID: 488
+
+Second Run of Program:
+Process P
+	The value of a: 10
+	The value of b: 30
+	The Process ID: 491
+Process Q
+	The value of a: 35
+	The value of b: 25
+	The Process ID: 492
+Process Q
+	The value of a: 35
+	The value of b: 45
+	The Process ID: 492
+Process R
+	The value of a: 905
+	The value of b: 25
+	The Process ID: 493
+
+Third Run of Program:
+Process P
+	The value of a: 10
+	The value of b: 30
+	The Process ID: 495
+Process Q
+	The value of a: 35
+	The value of b: 25
+	The Process ID: 496
+Process Q
+	The value of a: 35
+	The value of b: 45
+	The Process ID: 496
+Process R
+	The value of a: 905
+	The value of b: 25
+	The Process ID: 497
+
+Interpretation:
+1) In line 15, fq = fork(); creates a parent process with
+fq = PID of child and a child process with fq = 0. Now in the
+parent process, the program goes to the else statement in line
+35 since fq != 0 (this is why Process P is printed first).
+In the child process, variable "a" is changed and Process Q is
+printed (which is the child process).
+
+2)In line 22, fr = fork(); creates another child process (Process R) and the parent process is Process Q. Parent process has fq = PID of child and child process has fq = 0. In line 23, the parent process executes this if statement, so variable "b" in Process Q is changed and Process Q is printed. In the child process, line 28 is executed and variable "a" is changed and the child process (Process R) is printed.
+
+3) Since there are no wait system calls, the parent processes doesnt wait for the child processes to finish executing. Therefore, this system allows parent processes to finish first before letting child process to execute.

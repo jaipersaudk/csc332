@@ -12,29 +12,30 @@ int main (int argc, char* argv[])
   int fq = 0;
   int fr = 0;
 
-  fq = fork(); // fork a child - call it Process Q
-  if (fq == 0) // if there is a successful fork
+  fq = fork(); // fork a child (call it Process Q) - 0 is returned to child, and PID is returned to parent
+  if (fq == 0) //child (Q) executes this
   {
     a = a+b;
     //print values of a,b, and process_id
-    printf("Process Q \nThe value of a: %d \nThe value of b: %d \nThe Process ID: %d\n", a,b,getpid());
+    printf("Process Q \n\tThe value of a: %d \n\tThe value of b: %d \n\tThe Process ID: %d\n", a,b,getpid());
 
-    fr = fork(); // fork another child - call it Process R
-    if (fr != 0) // unsuccessful fork
+    fr = fork(); // fork another child (call it Process R) - 0 is returned to child, and PID is returned to parent
+    if (fr != 0) //parent (Q) executes this
     {
       b = b+20;
       printf("Process Q \n\tThe value of a: %d \n\tThe value of b: %d \n\tThe Process ID: %d\n", a,b,getpid());
     }
-    else
+    else // child (R) executes this --> new child process(Process R)
     {
       a = (a*b)+30;
       printf("Process R \n\tThe value of a: %d \n\tThe value of b: %d \n\tThe Process ID: %d\n", a,b,getpid());
     }
   }
-  else
+
+  else // parent (P) executes this
   {
     b=a+b-5;
-    printf("Process Q \n\tThe value of a: %d \n\tThe value of b: %d \n\tThe Process ID: %d\n", a,b,getpid());
+    printf("Process P \n\tThe value of a: %d \n\tThe value of b: %d \n\tThe Process ID: %d\n", a,b,getpid());
   }
 
 

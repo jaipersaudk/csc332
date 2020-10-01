@@ -1,0 +1,20 @@
+Process P
+	The value of a: 10
+	The value of b: 30
+	The Process ID: 518
+Process Q
+	The value of a: 35
+	The value of b: 25
+	The Process ID: 519
+Process Q
+	The value of a: 35
+	The value of b: 45
+	The Process ID: 519
+Process Q
+	The value of a: 35
+	The value of b: 25
+	The Process ID: 519
+Process R
+	The value of a: 905
+	The value of b: 25
+	The Process ID: 520
