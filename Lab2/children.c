@@ -7,7 +7,7 @@
 
 int main (int argc, char* argv[])
 {
-  int w1, w2; //for waitpid for both children
+  int w1,w2; //waitpid for children
   int child1_status = 0; //status for first child
   int child1 = fork();
 
@@ -16,14 +16,17 @@ int main (int argc, char* argv[])
     perror ("Child 1 Fork Failed");
     exit(EXIT_FAILURE);
   }
-  else if (child1 == 0) //success
+
+  else if (child1 == 0) //executed by child
   //specify child process
   {
     printf("I am child one, my PID is: %d.\n", getpid());
+    exit(EXIT_SUCCESS);
   }
-  else
+
+  else //executed by parent
   {
-    int child2_status = 0;
+    int child2_status = 0; //status for second child
     int child2 = fork();
 
     if (child2 == -1) // error
@@ -32,12 +35,13 @@ int main (int argc, char* argv[])
       exit(EXIT_FAILURE);
     }
 
-    else if (child2 == 0) //success
+    else if (child2 == 0) //executed by child
     {
       printf("I am child two, my PID is: %d.\n", getpid());
+      exit(EXIT_SUCCESS);
     }
 
-    else
+    else // executed by parent
     {
       printf("I am the parent, my PID is: %d.\n", getpid());
 
@@ -45,21 +49,35 @@ int main (int argc, char* argv[])
       if (w1 == -1) //if there was an error
       {
         printf("Child 1 did not terminate\n");
-      }
-      else
-      {
-        printf("Child 1 terminated\n");
+        exit(EXIT_FAILURE);
       }
 
-      w2 = waitpid(child2,&child2_status, 0);//wait for the second process to stop. will return -1 for errors
+      else if (w1 == child1) // check how child 1 process was ended
+      {
+        if (WIFEXITED(child1_status))
+          printf("Child 1 terminated normally\n");
+        else if (WIFSIGNALED(child1_status))
+          printf("Child 1 terminated by signal\n");
+        else if (WIFSTOPPED(child1_status))
+            printf("Child 1 process has stopped\n");
+      }
+
+      w2 = waitpid(child2, &child2_status, 0);//wait for the second process to stop. will return -1 for errors
 
       if (w2 == -1) //if there was an error
       {
         printf("Child 2 did not terminate\n");
+        exit(EXIT_FAILURE);
       }
-      else
+
+      else if (w2 == child2) //check how child 2 process was ended
       {
-        printf("Child 2 terminated\n");
+        if (WIFEXITED(child2_status))
+          printf("Child 2 terminated normally\n");
+        else if (WIFSIGNALED(child2_status))
+          printf("Child 2 terminated by signal\n");
+        else if (WIFSTOPPED(child2_status))
+            printf("Child 2 process has stopped\n");
       }
 
       printf("The Parent's PID is: %d.\n", getpid());
