@@ -5,12 +5,11 @@
 #include <sys/wait.h>
 #include <errno.h>
 
-int main (int argc, char* argv[])
+int main (void)
 {
   int child_status = 0;
   int child = fork();
-  wait(&child_status); //let child process execute first then parent
-
+  wait(&child_status);
 
   if (child == -1) //if error
   {
@@ -21,8 +20,9 @@ int main (int argc, char* argv[])
   if (child == 0) //child process
   {
     printf("Child created successful.\nChild PID: %d\n", getpid()); //print child pid
-    execl("/bin/date","date",NULL); //execute date file to display date and time
-    printf("EXECL FAILED\n"); //error for execution of date
+    char *argv[] = {"ls", "-laxo", NULL};
+    execvp(argv[0], argv);
+    printf("EXECL FAILED\n"); //if error
     exit(EXIT_SUCCESS);
   }
 
@@ -30,6 +30,7 @@ int main (int argc, char* argv[])
   {
     printf("Parent PID: %d\n", getpid()); //print parent pid
   }
+
 
   return 0;
 }
