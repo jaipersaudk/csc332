@@ -11,7 +11,6 @@ int main (int argc, char* argv[])
   int child = fork();
   wait(&child_status); //let child process execute first then parent
 
-
   if (child == -1) //if error
   {
     perror("Child Fork Failed\n");
