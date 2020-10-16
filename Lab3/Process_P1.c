@@ -29,4 +29,6 @@ int main (int argc, char* argv[])
 
   close(fd2); //close the file
 
+  return 0;
+
 }
