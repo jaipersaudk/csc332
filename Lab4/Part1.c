@@ -17,7 +17,7 @@ int main (int argc, char* argv[])
 	char *arg[30]; //array to store arg from input_str
   int i = 0; //index for arg array
 
-  scanf("%[^\n]s", input_str); //scan the input in the terminal
+  scanf("%[^\n]s", input_str); //scan the input in the terminal until enter key is pressed (\n)
   int quit = strcmp("quit", input_str); //returns 0 if input string matches "quit"
 
   while (quit != 0) //while user didn't enter quit
