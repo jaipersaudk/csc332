@@ -4,54 +4,56 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <string.h>
+#include <errno.h>
 
 int main (int argc, char* argv[])
 {
 
-  char memory[30];
-  char input_str[20];
-  char *token;
-  char *arg_arr[30];
+  int child_stat = 0;
 
-  int child_status = 0;
+	char mem[30]; // memory for execvp
+	char input_str[20]; // for input in terminal(commands and arguments)
+	char *token; // to tokenize string
+	char *arg[30]; //array to store arg from input_str
+  int i = 0; //index for arg array
 
-  scanf("%[^\n]s", input_str);
-  int quit = strcmp("quit", input_str);
-  int args = 0;
+  scanf("%[^\n]s", input_str); //scan the input in the terminal
+  int quit = strcmp("quit", input_str); //returns 0 if input string matches "quit"
 
-  while (quit != 0)
+  while (quit != 0) //while user didn't enter quit
   {
-    token = strtok(input_str, " ");
+    token = strtok(input_str, " "); //get first token in string delimited by space
 
-    while (token != NULL);
+    while (token != NULL)
     {
-      arg_arr[args++]=token;
-      token = strtok(NULL, " ");
+      arg[i++]=token; // store token into arg_arr
+      token = strtok(NULL, " "); //extract all tokens
     }
 
-    child_status = fork();
+    child_stat = fork();
 
-    if (child_status == -1) //if error
+    if (child_stat < 0) //if error
     {
-    perror("Child Fork Failed\n");
-    exit(EXIT_FAILURE);
+      perror("Fork Failed\n");
+      exit(EXIT_FAILURE);
     }
 
-    else if (child_status == 0) //child process
+    else if (child_stat == 0) //child process
     {
-      if (execvp(*arg_arr, arg_arr) < 0)
+      if (execvp(arg[0], arg) < 0) // if the request file doesnt exist, then print error message
       {
-        perror("Fail\n");
+        perror("\texecvp failed");
         return 1;
       }
     }
 
     else //parent process
-    {
-      wait(&child_status);
-      execvp(argv[0], argv);
+		{
+      wait(&child_stat); //wait for child process
+			execvp(argv[0], argv); //execute command and their arguments
     }
-  }
 
-  return 0;
+	}
+
+	return 0;
 }
