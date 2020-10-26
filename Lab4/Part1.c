@@ -12,23 +12,25 @@ int main (int argc, char* argv[])
   int child_stat = 0;
 
 	char mem[30]; // memory for execvp
-	char input_str[20]; // for input in terminal(commands and arguments)
+	char input[20]; // for input in terminal(commands and arguments)
 	char *token; // to tokenize string
 	char *arg[30]; //array to store arg from input_str
   int i = 0; //index for arg array
 
-  scanf("%[^\n]s", input_str); //scan the input in the terminal until enter key is pressed (\n)
-  int quit = strcmp("quit", input_str); //returns 0 if input string matches "quit"
+  scanf("%[^\n]s", input); //scan the input in the terminal until enter key is pressed (\n)
+  int quit = strcmp("quit", input); //returns 0 if input string matches "quit"
 
   while (quit != 0) //while user didn't enter quit
   {
-    token = strtok(input_str, " "); //get first token in string delimited by space
+    //break string input into tokens
+    token = strtok(input, " ");
 
     while (token != NULL)
     {
-      arg[i++]=token; // store token into arg_arr
-      token = strtok(NULL, " "); //extract all tokens
+      arg[i++]=token;
+      token = strtok(NULL, " ");
     }
+
 
     child_stat = fork();
 
@@ -40,17 +42,22 @@ int main (int argc, char* argv[])
 
     else if (child_stat == 0) //child process
     {
-      if (execvp(arg[0], arg) < 0) // if the request file doesnt exist, then print error message
+      //execute command and arguments from input
+      execvp(arg[0], arg);
+
+      // if the request file doesnt exist, then print error message
+      if (execvp(arg[0], arg) < 0)
       {
-        perror("\texecvp failed");
+        perror("\tUnknown Command");
         return 1;
       }
+
     }
 
     else //parent process
 		{
       wait(&child_stat); //wait for child process
-			execvp(argv[0], argv); //execute command and their arguments
+			execvp(argv[0], argv); //executes program again --> asks user for new command input
     }
 
 	}
