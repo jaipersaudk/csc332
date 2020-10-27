@@ -54,7 +54,6 @@ int main (int argc, char* argv[])
   }
 
 
-
   // reading data from filename
   FILE *input_file = fopen(filename, "r"); //read file
   for (int i = 0; i < student; i++)
@@ -65,8 +64,6 @@ int main (int argc, char* argv[])
     }
   }
   fclose(input_file);
-
-
 
 
   //calculate averages

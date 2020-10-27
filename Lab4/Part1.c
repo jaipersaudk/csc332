@@ -31,7 +31,6 @@ int main (int argc, char* argv[])
       token = strtok(NULL, " ");
     }
 
-
     child_stat = fork();
 
     if (child_stat < 0) //if error
