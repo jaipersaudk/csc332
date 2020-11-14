@@ -1,14 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 #include <unistd.h>
+#include <sys/ipc.h>
+#include "sem.h"
+#include <time.h>
 
 #define CHILD      			0  			/* Return value of child proc from fork call */
-#define TRUE       			0  
+#define TRUE       			0
 #define FALSE      			1
 
 FILE *fp1, *fp2, *fp3, *fp4;			/* File Pointers */
 
-main()
+int main()
 {
 	int pid;						// Process ID after fork call
 	int i;							// Loop index
@@ -17,38 +21,52 @@ main()
 	int status;						// Exit status of child process
 	int bal1, bal2;					// Balance read by processes
 	int flag, flag1;				// End of loop variables
-	
+
+	/*-------------------------Added Code -----------------------------*/
+	int mutex1 = semget(IPC_PRIVATE, 1, 0666 | IPC_CREAT); //create a new segment
+	if (mutex1 == -1) // if error in creating mutex1
+	{
+		printf("Mutex Failed\n");
+		exit(1);
+	}
+	sem_create(mutex1, 1); //create semaphore with intial 1
+	/*-----------------------------------------------------------------*/
+
 	//Initialize the file balance to be $100
 	fp1 = fopen("balance","w");
 	bal1 = 100;
 	fprintf(fp1, "%d\n", bal1);
 	fclose(fp1);
-	
+
 	//Initialize the number of attempts to be 20
 	fp4 = fopen("attempt", "w");
-	N_Att = 20;
+	N_Att = 12;
 	fprintf(fp4, "%d\n", N_Att);
 	fclose(fp4);
-	
+
 	//Create child processes that will do the updates
-		if ((pid = fork()) == -1) 
+		if ((pid = fork()) == -1)
 	{
 		//fork failed!
 		perror("fork");
 		exit(1);
 	}
-	
+
 	if (pid == CHILD){
 	//First Child Process. Dear old dad tries to do some updates.
-	
+
 		N=5;
 		for(i=1;i<=N; i++)
 		{
+			/*-------------------------Added Code -----------------------------*/
+			P(mutex1); // prevent other access to balance while dad accesses
+			/*-----------------------------------------------------------------*/
+
 			printf("Dear old dad is trying to do update.\n");
 			fp1 = fopen("balance", "r+");
 			fscanf(fp1, "%d", &bal2);
 			printf("Dear old dad reads balance = %d \n", bal2);
-			
+
 			//Dad has to think (0-14 sec) if his son is really worth it
 			sleep(rand()%15);
 			fseek(fp1,0L,0);
@@ -59,9 +77,13 @@ main()
 
 			printf("Dear old dad is done doing update. \n");
 			sleep(rand()%5);	/* Go have coffee for 0-4 sec. */
+
+			/*-------------------------Added Code -----------------------------*/
+			V(mutex1); //allow other processes to access balance
+			/*-----------------------------------------------------------------*/
 		}
 	}
-	
+
 	else
 	{
 		//Parent Process. Fork off another child process.
@@ -76,8 +98,11 @@ main()
 			printf("First Son's Pid: %d\n",getpid());
 			//Second child process. First poor son tries to do updates.
 			flag = FALSE;
-			while(flag == FALSE) 
+			while(flag == FALSE)
 			{
+				/*-------------------------Added Code -----------------------------*/
+				P(mutex1); // prevent other access to balance while son1 accesses
+				/*-----------------------------------------------------------------*/
 				fp3 = fopen("attempt" , "r+");
 				fscanf(fp3, "%d", &N_Att);
 				if(N_Att == 0)
@@ -109,14 +134,19 @@ main()
 						N_Att -=1;
 						fprintf(fp3, "%d\n", N_Att);
 						fclose(fp3);
+
 					}
 				}
+
+				/*-------------------------Added Code -----------------------------*/
+				V(mutex1); //allow other processes to access balance
+				/*-----------------------------------------------------------------*/
 			}
 		}
 		else
 		{
 		//Parent Process. Fork off one more child process.
-			if ((pid = fork()) == -1) 
+			if ((pid = fork()) == -1)
 			{
 				//fork failed!
 				perror("fork");
@@ -127,8 +157,11 @@ main()
 				printf("Second Son's Pid: %d\n",getpid());
 				//Third child process. Second poor son tries to do updates.
 				flag1 = FALSE;
-				while(flag1 == FALSE) 
+				while(flag1 == FALSE)
 				{
+					/*-------------------------Added Code -----------------------------*/
+					P(mutex1); // prevent other access to balance while son2 accesses
+					/*-----------------------------------------------------------------*/
 					fp3 = fopen("attempt" , "r+");
 					fscanf(fp3, "%d", &N_Att);
 					if(N_Att == 0)
@@ -161,8 +194,12 @@ main()
 							N_Att -=1;
 							fprintf(fp3, "%d\n", N_Att);
 							fclose(fp3);
+
 						}
 					}
+					/*-------------------------Added Code -----------------------------*/
+					V(mutex1); //allow other processes to access balance
+					/*-----------------------------------------------------------------*/
 				}
 			}
 			else
@@ -170,12 +207,13 @@ main()
 				//Now parent process waits for the child processes to finish
 				pid = wait(&status);
 				printf("Process(pid = %d) exited with the status %d. \n", pid, status);
-			
+
 				pid = wait(&status);
 				printf("Process(pid = %d) exited with the status %d. \n", pid, status);
-			
+
 				pid = wait(&status);
 				printf("Process(pid = %d) exited with the status %d. \n", pid, status);
+
 			}
 			exit(0);
 		}
