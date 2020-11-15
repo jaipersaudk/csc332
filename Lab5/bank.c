@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <sys/ipc.h>
 #include "sem.h"
-#include <time.h>
 
 #define CHILD      			0  			/* Return value of child proc from fork call */
 #define TRUE       			0
@@ -40,7 +39,7 @@ int main()
 
 	//Initialize the number of attempts to be 20
 	fp4 = fopen("attempt", "w");
-	N_Att = 12;
+	N_Att = 15;
 	fprintf(fp4, "%d\n", N_Att);
 	fclose(fp4);
 
