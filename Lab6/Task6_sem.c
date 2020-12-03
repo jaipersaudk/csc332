@@ -6,7 +6,7 @@
 int main ()
 {
   int child; //for child processes
-  int examples = 0; //for 10 instances of the program
+  int examples = 0; //to show 10 examples in the program
   int randNum; // pick random ingredients - tobacco and match (0), match and paper (1), paper and tobacco (2)
   //synchronize agent and smoker processes
   //we will need 5 semaphores - agents, 3 smokers, and lock
