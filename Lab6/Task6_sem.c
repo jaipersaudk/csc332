@@ -65,6 +65,7 @@ int main ()
     exit(1);
   }
 
+  //code reflects the pseudocode from the website
   else if (child == 0)
   {
     while (1)
@@ -85,6 +86,7 @@ int main ()
     exit(1);
   }
 
+  //code reflects the pseudocode from the website
   else if (child == 0)
   {
     while (1)
@@ -105,6 +107,7 @@ int main ()
     exit(1);
   }
 
+  //code reflects the pseudocode from the website
   else if (child == 0)
   {
     while (1)

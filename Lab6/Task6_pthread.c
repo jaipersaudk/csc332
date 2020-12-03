@@ -18,7 +18,8 @@ void *agent_process()
     pthread_mutex_lock(&mutex); //lock
     pthread_cond_wait(&table, &mutex);
 
-    int ingred1 = 0; //when agent places random ingredient on the table
+    // used for agent to place random ingredient on the table
+    int ingred1 = 0;
     int ingred2 = 0;
     int smoker = 0; //calculate which smoker to select based on ingredient on table
 
@@ -28,15 +29,17 @@ void *agent_process()
       ingred1 = rand() % 3;
       ingred2 = rand() % 3;
       smoker = ingred1+ingred2;
+      // ingredient: 0 - Tobacco, 1 - Match, 2 - paper
+      // smoker: 1 - paper, 2 - Match, 3 - Tobacco
     }
 
     //select ingredient according to random number
     printf("Agent places %s and %s on table.\n", ingred[ingred1], ingred[ingred2]);
-    if (smoker == 1)
+    if (smoker == 1) //tobacco and match on table - smoker paper
       pthread_cond_signal(&paper);
-    else if (smoker == 2)
+    else if (smoker == 2) // tobacco and paper on table - smoker has match
       pthread_cond_signal(&match);
-    else if (smoker == 3)
+    else if (smoker == 3) // match and paper on the table - smoker has tobacco
       pthread_cond_signal(&tobacco);
     pthread_mutex_unlock(&mutex);
 
@@ -44,6 +47,7 @@ void *agent_process()
   }
 }
 
+//similar implementation to one using semaphores
 void *smoker_tobacco()
 {
   while(1)
@@ -57,6 +61,7 @@ void *smoker_tobacco()
   }
 }
 
+//similar implementation to one using semaphores
 void *smoker_match()
 {
   while(1)
@@ -70,7 +75,7 @@ void *smoker_match()
   }
 }
 
-
+//similar implementation to one using semaphores
 void *smoker_paper()
 {
   while(1)
@@ -99,14 +104,20 @@ void *table_process()
 
 int main()
 {
+  //the threads used to create and join
   pthread_t table, agent, tobacco, match, paper;
+
+  //to generate more random-like numbers
   srand(time(NULL));
+
+  //create threads for smokers, agent, and table
   pthread_create(&table, NULL, &table_process, NULL);
   pthread_create(&agent, NULL, &agent_process, NULL);
   pthread_create(&tobacco, NULL, &smoker_tobacco, NULL);
   pthread_create(&paper, NULL, &smoker_paper, NULL);
   pthread_create(&match, NULL, &smoker_match, NULL);
 
+  //wait for threads to finish
   pthread_join(table, NULL);
   pthread_join(agent, NULL);
   pthread_join(tobacco, NULL);
